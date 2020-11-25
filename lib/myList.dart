@@ -13,8 +13,17 @@ class MyList extends StatelessWidget {
 
   Widget _myListitem(context, line) {
     return ListTile(
-      leading: Checkbox(value: false, onChanged: _onChanged),
-      title: Text(line.activity),
+      leading: Checkbox(
+          value: line.checkbox,
+          onChanged: (bool val) {
+            var state = Provider.of<MyState>(context, listen: false);
+            state.checkboxPressed(line);
+          }),
+      title: Text(line.activity,
+          style: TextStyle(
+              decoration: (line.checkbox
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none))),
       trailing: IconButton(
           icon: Icon(Icons.clear),
           onPressed: () {
@@ -24,5 +33,3 @@ class MyList extends StatelessWidget {
     );
   }
 }
-
-void _onChanged(bool value) {}

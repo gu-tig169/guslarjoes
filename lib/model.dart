@@ -5,6 +5,13 @@ class TodoList {
   bool checkbox;
 
   TodoList({this.checkbox, this.activity});
+  void checkboxClicked() {
+    if (this.checkbox == false) {
+      this.checkbox = true;
+    } else {
+      this.checkbox = false;
+    }
+  }
 }
 
 class MyState extends ChangeNotifier {
@@ -28,6 +35,12 @@ class MyState extends ChangeNotifier {
 
   void removeLines(TodoList line) {
     _list.remove(line);
+    notifyListeners();
+  }
+
+  void checkboxPressed(TodoList line) {
+    var idx = list.indexOf(line);
+    _list[idx].checkboxClicked();
     notifyListeners();
   }
 }
