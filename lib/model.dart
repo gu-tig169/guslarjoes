@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:john_tig169/API.dart';
 
 class TodoList {
+  String id;
   String activity;
   bool checkbox;
 
-  TodoList({this.checkbox, this.activity});
+  TodoList({this.id, this.activity, this.checkbox = false});
+
+  static Map<String, dynamic> toJson(TodoList line) {
+    return {
+      'title': line.activity,
+      'done': line.checkbox,
+    };
+  }
+
+  static TodoList fromJson(Map<String, dynamic> json) {
+    return TodoList(
+      id: json['id'],
+      activity: json['title'],
+      checkbox: json['done'],
+    );
+  }
+
   void checkboxClicked() {
     if (this.checkbox == false) {
       this.checkbox = true;
@@ -26,21 +44,27 @@ class MyState extends ChangeNotifier {
     TodoList(checkbox: false, activity: 'Meditate'),
   ];
 
+  Future fetchList() async {
+    List<TodoList> list = await Api.fetchTodos();
+    _list = list;
+    notifyListeners();
+  }
+
   List<TodoList> get list => _list;
 
-  void addLines(TodoList line) {
-    _list.add(line);
-    notifyListeners();
+  void addLine(TodoList line) async {
+    await Api.addLine(line);
+    await fetchList();
   }
 
-  void removeLines(TodoList line) {
-    _list.remove(line);
-    notifyListeners();
+  void removeLine(TodoList line) async {
+    await Api.removeLine(line.id);
+    await fetchList();
   }
 
-  void checkboxPressed(TodoList line) {
-    var idx = list.indexOf(line);
-    _list[idx].checkboxClicked();
-    notifyListeners();
+  void checkboxPressed(TodoList line, bool checkbox) async {
+    line.checkbox = checkbox;
+    await Api.updateLine(line, line.id);
+    await fetchList();
   }
 }

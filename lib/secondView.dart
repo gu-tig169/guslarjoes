@@ -65,13 +65,11 @@ class SecondViewState extends State<SecondView> {
                     onPressed: () {
                       Navigator.pop(context,
                           TodoList(checkbox: false, activity: activity));
-                      //Navigator.push(context,
-                      //  MaterialPageRoute(builder: (context) => MainView()));
-                    }, //texten som skrivits i textformfield skall läggas till i listan,
+                    },
                   ),
                   Container(
                       child: Text(
-                    'Add',
+                    'Add to list',
                     style: TextStyle(fontSize: 16),
                   ))
                 ],

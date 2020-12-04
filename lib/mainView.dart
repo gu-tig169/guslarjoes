@@ -11,29 +11,41 @@ class MainView extends StatefulWidget {
 }
 
 class MainViewState extends State<MainView> {
-  @override
+  var filterBy = 'All';
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("TIG169 TODO"),
         centerTitle: true,
         actions: [
-          _popupWindow(),
+          PopupMenuButton(
+            onSelected: (value) {
+              setState(() {
+                filterBy = value;
+              });
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(child: Text('all'), value: 'all'),
+              PopupMenuItem(child: Text('done'), value: 'done'),
+              PopupMenuItem(child: Text('undone'), value: 'undone')
+            ],
+            icon: Icon(Icons.more_vert, size: 25, color: Colors.black),
+          )
         ],
       ),
       body: Consumer<MyState>(
-          builder: (context, state, child) => MyList(state.list)),
+          builder: (context, state, child) => MyList(
+                _filterList(state.list, filterBy),
+              )),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () async {
           var newActivity = await Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SecondView(TodoList(
-                        activity: '',
-                      ))));
+                  builder: (context) => SecondView(TodoList(activity: ''))));
           if (newActivity != null) {
-            Provider.of<MyState>(context, listen: false).addLines(newActivity);
+            Provider.of<MyState>(context, listen: false).addLine(newActivity);
           }
         },
       ),
@@ -41,23 +53,11 @@ class MainViewState extends State<MainView> {
   }
 }
 
-Widget _popupWindow() {
-  return PopupMenuButton<String>(
-    itemBuilder: (context) => [
-      PopupMenuItem(
-        child: Text('All'),
-      ),
-      PopupMenuItem(
-        child: Text('Done'),
-      ),
-      PopupMenuItem(
-        child: Text('Undone'),
-      ),
-    ],
-    icon: Icon(
-      Icons.more_vert,
-      size: 30,
-      color: Colors.black,
-    ),
-  );
+List<TodoList> _filterList(list, filterBy) {
+  if (filterBy == 'All') return list;
+  if (filterBy == 'Done')
+    return list.where((item) => item.checkbox == true).toList();
+  if (filterBy == 'Undone')
+    return list.where((item) => item.checkbox == false).toList();
+  return null;
 }
