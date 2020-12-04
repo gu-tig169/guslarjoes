@@ -8,28 +8,27 @@ class MyList extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return ListView(
-        children: list.map((line) => _myListitem(context, line)).toList());
+        children: list.map((line) => _myListItem(context, line)).toList());
   }
+}
 
-  Widget _myListitem(context, line) {
-    return ListTile(
-      leading: Checkbox(
-          value: line.checkbox,
-          onChanged: (bool val) {
-            var state = Provider.of<MyState>(context, listen: false);
-            state.checkboxPressed(line);
-          }),
+Widget _myListItem(context, TodoList line) {
+  return CheckboxListTile(
       title: Text(line.activity,
           style: TextStyle(
               decoration: (line.checkbox
                   ? TextDecoration.lineThrough
                   : TextDecoration.none))),
-      trailing: IconButton(
+      secondary: IconButton(
           icon: Icon(Icons.clear),
           onPressed: () {
             var state = Provider.of<MyState>(context, listen: false);
-            state.removeLines(line);
+            state.removeLine(line);
           }),
-    );
-  }
+      value: line.checkbox,
+      controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (bool value) {
+        var state = Provider.of<MyState>(context, listen: false);
+        state.checkboxPressed(line, value);
+      });
 }

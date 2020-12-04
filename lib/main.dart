@@ -6,6 +6,7 @@ import 'model.dart';
 
 void main() {
   var state = MyState();
+  state.fetchList();
 
   runApp(
     ChangeNotifierProvider(
